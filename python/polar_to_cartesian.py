@@ -1,8 +1,8 @@
-import numpy as np 
+import numpy as np
 from scipy.interpolate import griddata
 from scipy.ndimage import map_coordinates
 
-from tic import tic 
+from tic import tic
 
 
 @tic
@@ -60,6 +60,7 @@ def polar_to_cartesian_fast(polar_image, cartesian_size, polar_pixel_size):
 
     return cartesian_image
 
+
 @tic
 def polar_to_cartesian_naive_slow(polar_image, cartesian_size, polar_pixel_size):
     """
@@ -101,6 +102,3 @@ def polar_to_cartesian_naive_slow(polar_image, cartesian_size, polar_pixel_size)
                 cartesian_image[y, x] = polar_image[i, j]
 
     return cartesian_image
-
-
-
