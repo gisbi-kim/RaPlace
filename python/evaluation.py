@@ -52,12 +52,22 @@ def plot_similarity_matrix(similarity_matrix, title="Similarity Matrix"):
         similarity_matrix (numpy.ndarray): Similarity matrix of shape (N, N).
         title (str): Title of the plot.
     """
+    # similarity_matrix 저장
+    np.save("similarity_matrix.npy", similarity_matrix)  # 파일 이름을 원하는 대로 지정 가능
+
+    # plt.ion()  # 인터랙티브 모드 활성화
     plt.figure(figsize=(12, 10))
-    sns.heatmap(similarity_matrix, cmap="viridis")
+    heatmap = sns.heatmap(similarity_matrix, cmap="inferno_r", vmin=-0.01, vmax=0.1)
+    cbar = heatmap.collections[0].colorbar  # 컬러바 객체 가져오기
+
     plt.title(title)
     plt.xlabel("Descriptor Index")
     plt.ylabel("Descriptor Index")
     plt.show()
+
+    # clim을 재조정하는 예시
+    # cbar.set_clim(0.2, 0.8)  # 새로운 컬러 범위로 설정
+    # plt.draw()  # 업데이트된 값 반영
 
 
 @tic
@@ -125,31 +135,36 @@ def evaluate(sinoffts):
         exp_poses (list of iterable): List of pose information for each candidate descriptor.
 
     Returns:
-        distance_matrix (numpy.ndarray): Matrix of computed distances.
+        distance_matrix (numpy.ndarray): Matrix of computed sim.
     """
     num_queries = len(sinoffts)
     distance_matrix = np.zeros((num_queries, num_queries))
 
-    for i in range(num_queries):
-        max_val = 1000000000000
-        candnum = -1
-        query_sinofft = sinoffts[i]
+    for query_idx in range(num_queries):
 
-        for cands in range(len(sinoffts)):
-            tmp_sinofft = sinoffts[cands]
-            _, tmpval = fast_dft(query_sinofft, tmp_sinofft)
-            if tmpval > max_val:
-                max_val = tmpval
-                candnum = cands
+        current_min_distance = np.inf
+        current_nearest_target_idx = None
 
-        nearest_idx = candnum
-        _, tmpval_self = fast_dft(query_sinofft, query_sinofft)
-        min_dist = (tmpval_self - max_val) / 1000
+        query_sinofft = sinoffts[query_idx]
 
-        # 거리 매트릭스에 저장 (조합된 거리)
-        distance_matrix[i, nearest_idx] = min_dist
+        _, self_corr = fast_dft(query_sinofft, query_sinofft)
+        for target_idx, target_sinofft in enumerate(sinoffts):
+            _, corr = fast_dft(query_sinofft, target_sinofft)
 
-        print(f"Query {i}: Nearest Index = {nearest_idx}, Min Distance = {min_dist}")
+            # calibrated_corr = (self_corr - corr) / 1000000
+            mutably_calibrated_distance = abs((self_corr - corr) / self_corr)
+            print(f" calibrated_corr btn {query_idx} and {target_idx}: {mutably_calibrated_distance:.4f}")
+            if mutably_calibrated_distance < current_min_distance:
+                current_min_distance = mutably_calibrated_distance
+                current_nearest_target_idx = target_idx
+
+            # gather all results for drawing sim mat
+            distance_matrix[query_idx, target_idx] = mutably_calibrated_distance
+
+        # argmax disp 
+        nearest_idx = current_min_distance
+        nearest_similarity = current_nearest_target_idx 
+        print(f"Query {query_idx}: Nearest Index = {nearest_idx}, Max Distance = {nearest_similarity}")
 
     print("Plotting distance matrix...")
     plot_similarity_matrix(distance_matrix, title="Distance Matrix")
@@ -223,11 +238,14 @@ def main():
     sinoffts = generate_raplace_descriptors_offline_batch(args.data_dir)
 
     # 결과를 파일로 저장하거나 처리할 수 있습니다. 여기서는 간단히 로그를 출력합니다.
-    print(f"Processed {len(sinoffts)} images.")
+    print(f"\n\nProcessed {len(sinoffts)} images.\n\n")
 
     # 평가 수행
     evaluate(sinoffts)
 
 
 if __name__ == "__main__":
-    main()
+    
+    # main()
+    
+    plot_similarity_matrix(np.load("similarity_matrix.npy"))
