@@ -62,9 +62,8 @@ def generate_raplace_descriptor(image_path, theta, config):
     polar_image = np.array(Image.open(image_path).convert("L"))  # Convert to grayscale
     print(f" polar img_gray of size {polar_image.shape} is read.")
 
-    NAVTECH_RADAR_MAX_SENSING_RANGE = 200.0
     original_polar_pixel_size = (
-        NAVTECH_RADAR_MAX_SENSING_RANGE / polar_image.shape[0]
+        config["NAVTECH_RADAR_MAX_SENSING_RANGE"] / polar_image.shape[0]
     )  # Polar 이미지에서 한 픽셀이 차지하는 거리 (미터)
 
     # 다운사이즈 설정

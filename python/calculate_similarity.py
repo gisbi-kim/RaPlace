@@ -1,10 +1,6 @@
 import numpy as np
 from scipy.fft import fft, ifft
 
-from tic import tic
-
-
-@tic
 def fast_dft(query_descriptor, candidate_descriptor):
     """
     Perform FFT-based cross-correlation between query and candidate descriptors.
