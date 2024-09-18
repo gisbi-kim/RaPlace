@@ -1,4 +1,4 @@
-function [corrmap, maxval] = fast_dft(Mq,Mi)
+function [corrmap, maxval] = fast_dft(Mq, Mi)
     Fq = fft(Mq); % fft along theta axis
     Fn = fft(Mi);
     corrmap_2d = ifft(Fq.*conj(Fn));

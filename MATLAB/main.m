@@ -26,7 +26,7 @@ disp(strcat('Processing :  ',data_path(end-12:end-10), data_path(end-4:end-1)," 
 %   L global_pose.csv
 
 down_shape = 0.1;
-[data_sinofft,data_rowkeys, data_poses] = loadData(down_shape);
+[data_sinofft, data_rowkeys, data_poses] = loadData(down_shape);
 
 %% main - global recognizer
 revisit_criteria = 20; % in meter (recommend test for 5, 10, 20 meters)
