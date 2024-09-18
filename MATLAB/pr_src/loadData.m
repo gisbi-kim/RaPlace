@@ -9,7 +9,7 @@ data_save_path = fullfile('somewhere',data_path(end-12:end));
 is_already_made_data_exist = exist(data_save_path);
 if is_already_made_data_exist == 0 
     % make 
-    [sinofft,rowkeys, poses] = generateRadon(data_path,down_shape);    
+    [sinofft,rowkeys, poses] = generateRadon(data_path, down_shape);    
     
     % save
     mkdir(data_save_path);

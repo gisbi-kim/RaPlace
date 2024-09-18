@@ -1,4 +1,4 @@
-function [sinoffts, rowkeys, xy_poses] = generateRadon(data_dir,down_shape)
+function [sinoffts, rowkeys, xy_poses] = generateRadon(data_dir, down_shape)
 
 %%
 radar_data_dir = fullfile(data_dir, 'sensor_data/radar/backward_cart/');
@@ -40,7 +40,7 @@ for data_idx = 1:num_data
     [R,xp] = radon(tmp,theta);
     R = R/max(max(R));
     R = double(R);
-    R = imresize(R,down_shape);
+    R = imresize(R, down_shape);
     sinofft = abs(fft(R));
     sinofft_rows = size(sinofft,1);
     sinofft = sinofft(1:fix(sinofft_rows/2),:);
