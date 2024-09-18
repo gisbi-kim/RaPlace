@@ -99,8 +99,10 @@ for query_idx = 1:num_queries - 1
         end
     end
     nearest_idx = candnum;
-    [fftresult,tmpval] = fast_dft(query_sinofft, query_sinofft);
+
+    [fftresult, tmpval] = fast_dft(query_sinofft, query_sinofft);
     min_dist = (tmpval-maxval)/1000;
+
     real_dist = dist_btn_pose(query_pose, exp_poses(nearest_idx, :));
     
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
